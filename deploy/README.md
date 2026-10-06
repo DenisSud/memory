@@ -72,9 +72,11 @@ that should not:
 | `clef-flash:9b-8k` | +0.81 | +0.40 | ~0.3 s |
 | `tev1:4b` | +0.55 | −0.14 | ~3 s |
 
-`nimble:latest` is the default for that reason; `clef-flash:9b-8k` is the tagged
-alternative (leaner ingest — raise the threshold or accept fewer stored facts).
-A hosted jev is the upgrade path: the config is a base URL, a model and an
+`clef-flash:9b-8k` is the default: it is the fastest of the three and the one we
+keep loaded. Its ingest separation is the weakest of the three, so the ingest
+gate is the one to watch — raise `MEM0_GATE_THRESHOLD` if trivia slips through.
+`nimble:latest` separates best if quality ever matters more than latency. A
+hosted jev is the upgrade path: the config is a base URL, a model and an
 optional key, nothing else.
 
 ## Consumers

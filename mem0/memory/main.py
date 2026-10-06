@@ -58,6 +58,7 @@ from mem0.memory.utils import (
     process_telemetry_filters,
     remove_code_blocks,
 )
+from mem0.systemone.gates import SystemOneGates
 from mem0.utils.entity_extraction import extract_entities, extract_entities_batch
 from mem0.utils.factory import (
     EmbedderFactory,
@@ -485,6 +486,10 @@ class _AsyncOSSProject:
 
 
 class Memory(MemoryBase):
+    # Set in __init__ when System One gates are configured. Declared here so
+    # instances built without __init__ (tests, subclass wiring) still resolve it.
+    systemone: Optional[SystemOneGates] = None
+
     def __init__(self, config: MemoryConfig = MemoryConfig()):
         self.config = config
 
@@ -509,6 +514,9 @@ class Memory(MemoryBase):
                 config.reranker.provider,
                 config.reranker.config
             )
+
+        # Initialize the System One gates if configured
+        self.systemone = SystemOneGates(config.systemone) if config.systemone else None
 
         # Entity store is initialized lazily on first use
         self._entity_store = None
@@ -984,6 +992,10 @@ class Memory(MemoryBase):
         except Exception as e:
             logger.error(f"Error parsing extraction response: {e}")
             extracted_memories = []
+
+        # System One ingest gate: the decision model drops facts not worth storing
+        if self.systemone:
+            extracted_memories = self.systemone.filter_facts(extracted_memories)
 
         if not extracted_memories:
             # Save messages even if nothing extracted
@@ -1517,6 +1529,10 @@ class Memory(MemoryBase):
                 original_memories = reranked_memories
             except Exception as e:
                 logger.warning(f"Reranking failed, using original results: {e}")
+
+        # System One output gate: the decision model drops results that do not answer the query
+        if self.systemone:
+            original_memories = self.systemone.filter_results(query, original_memories)
 
         if temporal_usage_notice:
             display_temporal_usage_notice(self, "sync", "search", *temporal_usage_notice)
@@ -2191,6 +2207,10 @@ class Memory(MemoryBase):
 
 
 class AsyncMemory(MemoryBase):
+    # Set in __init__ when System One gates are configured. Declared here so
+    # instances built without __init__ (tests, subclass wiring) still resolve it.
+    systemone: Optional[SystemOneGates] = None
+
     def __init__(self, config: MemoryConfig = MemoryConfig()):
         self.config = config
 
@@ -2216,6 +2236,9 @@ class AsyncMemory(MemoryBase):
                 config.reranker.provider,
                 config.reranker.config
             )
+
+        # Initialize the System One gates if configured
+        self.systemone = SystemOneGates(config.systemone) if config.systemone else None
 
         if MEM0_TELEMETRY:
             telemetry_config = _safe_deepcopy_config(self.config.vector_store.config)
@@ -2666,6 +2689,10 @@ class AsyncMemory(MemoryBase):
         except Exception as e:
             logger.error(f"Error parsing extraction response (async): {e}")
             extracted_memories = []
+
+        # System One ingest gate: the decision model drops facts not worth storing
+        if self.systemone:
+            extracted_memories = await self.systemone.filter_facts_async(extracted_memories)
 
         if not extracted_memories:
             await asyncio.to_thread(self.db.save_messages, messages, session_scope)
@@ -3205,6 +3232,10 @@ class AsyncMemory(MemoryBase):
                 original_memories = reranked_memories
             except Exception as e:
                 logger.warning(f"Reranking failed, using original results: {e}")
+
+        # System One output gate: the decision model drops results that do not answer the query
+        if self.systemone:
+            original_memories = await self.systemone.filter_results_async(query, original_memories)
 
         if temporal_usage_notice:
             await display_temporal_usage_notice_async(self, "async", "search", *temporal_usage_notice)

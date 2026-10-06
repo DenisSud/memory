@@ -42,7 +42,7 @@ services:
       - OPENAI_API_KEY=${OLLAMA_API_KEY:-ollama}
       - OPENAI_BASE_URL=${OLLAMA_BASE_URL:-http://127.0.0.1:11434/v1}
       - MEM0_DEFAULT_LLM_MODEL=${MEM0_LLM_MODEL:-qwen3.5:4b}
-      - MEM0_DEFAULT_EMBEDDER_MODEL=${MEM0_EMBEDDER_MODEL:-nomic-embed-text-v2-moe}
+      - MEM0_DEFAULT_EMBEDDER_MODEL=${MEM0_EMBEDDER_MODEL:-nomic-embed-text-v2-moe:cpu}
       - MEM0_TELEMETRY=false
       - ADMIN_API_KEY=${MEM0_ADMIN_API_KEY:?inject at up time}
       - JWT_SECRET=${MEM0_JWT_SECRET:?inject at up time}

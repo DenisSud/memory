@@ -93,6 +93,16 @@ namespaces live in the client.
 
 Keys come from `provision-keys.sh` and are shown once.
 
+## Coming back after a reboot
+
+`podman-compose up` does not survive a reboot by itself. The containers carry
+`restart: unless-stopped` and rootless `podman-restart.service` starts them
+again — enabled as a user unit (`systemctl --user enable podman-restart`),
+which needs lingering for the user (`loginctl enable-linger <user>`). Both were
+already true on the host this was cut over on; verify them on a new one with
+`systemctl --user is-enabled podman-restart.service` and
+`loginctl show-user "$USER" -p Linger`.
+
 ## Backups
 
 ```sh

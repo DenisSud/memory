@@ -5,8 +5,11 @@ the memory service. It exists so integration that belongs to the service lives
 in the service, instead of being worked around in every client.
 
 - `main` — upstream `main`, kept pristine.
-- `pi` — our patch branch, currently based on the upstream tag `v2.2.1` (the
-  version the deployment pins).
+- `upstream-v2.2.1` — the upstream release we pin, and the base branch our pull
+  requests target. Not `main`: that tracks upstream's HEAD, so reviewing against
+  it would show every upstream commit after the tag as a revert.
+- `pi` — our patch branch, based on the base branch above. The deployment pins
+  the tag `pi-2.2.1`.
 
 ## What we change
 
@@ -44,7 +47,8 @@ Without a `systemone` block the service behaves exactly like upstream.
 
 ```bash
 git fetch upstream --tags
-git rebase upstream/v<version> pi
+git branch upstream-v<version> v<version> && git push origin upstream-v<version>
+git rebase upstream-v<version> pi
 ```
 
 The patch is small and touches few files; conflicts should stay local to

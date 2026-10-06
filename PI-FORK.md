@@ -43,6 +43,14 @@ Enabling it is configuration, no code:
 
 Without a `systemone` block the service behaves exactly like upstream.
 
+## Running it
+
+`deploy/` is this service's own deployment: the compose stack (mem0 + pgvector),
+the image, the `/configure` replay and the key provisioning. It builds from this
+repo — the package and upstream's `server/`, dashboard excluded — so the service
+and its library never drift. Consumers (pi bots, the personal agent) hold a URL,
+a key and a `user_id`; nothing scoped server-side. See `deploy/README.md`.
+
 ## Rebase on a new upstream release
 
 ```bash

@@ -9,7 +9,7 @@ in the service, instead of being worked around in every client.
   requests target. Not `main`: that tracks upstream's HEAD, so reviewing against
   it would show every upstream commit after the tag as a revert.
 - `pi` — our patch branch, based on the base branch above. The deployment pins
-  the tag `pi-2.2.1`.
+  the tag `v2.2.1-pi1`: upstream's version, our revision on top.
 
 ## What we change
 

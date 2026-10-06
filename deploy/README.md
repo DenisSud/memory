@@ -17,7 +17,11 @@ carries the **System One gates**, the service's memory filtering.
 ## Run it
 
 ```sh
-git clone ssh://git@git.sudakov.site:2223/DenisSud/mem0.git ~/mem0   # read-only deploy key
+# the repo is private: use a read-only deploy key for this host
+git clone ssh://git@git.sudakov.site:2223/DenisSud/mem0.git ~/mem0
+# when Forgejo runs on this same host, the public name does not hairpin —
+# use its local SSH endpoint instead (and keep it as the remote):
+#   git clone ssh://git@127.0.0.1:2223/DenisSud/mem0.git ~/mem0
 cd ~/mem0/deploy
 # first time and after any data reset (~/mem0/deploy/{pgdata,history} hold the state):
 mkdir -p pgdata history
@@ -86,6 +90,16 @@ namespaces live in the client.
 | personal pi (`~/.pi/agent`) | `https://memory.sudakov.site` | Bitwarden `mem0 pi` | `denis` |
 
 Keys come from `provision-keys.sh` and are shown once.
+
+## Backups
+
+```sh
+podman exec mem0-db pg_dump -U mem0 -d postgres  | gzip > mem0-memories-$(date +%F).sql.gz
+podman exec mem0-db pg_dump -U mem0 -d mem0_app  | gzip > mem0-app-$(date +%F).sql.gz
+```
+
+`postgres` holds the memories, `mem0_app` the accounts and keys. Take both
+before moving or upgrading the stack; `pg_restore`/`psql` puts them back.
 
 ## Updating
 

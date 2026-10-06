@@ -4,6 +4,7 @@ from typing import Any, Dict, Optional
 from pydantic import BaseModel, Field
 
 from mem0.configs.rerankers.config import RerankerConfig
+from mem0.configs.systemone import SystemOneConfig
 from mem0.embeddings.configs import EmbedderConfig
 from mem0.llms.configs import LlmConfig
 from mem0.vector_stores.configs import VectorStoreConfig
@@ -45,6 +46,10 @@ class MemoryConfig(BaseModel):
     )
     reranker: Optional[RerankerConfig] = Field(
         description="Configuration for the reranker",
+        default=None,
+    )
+    systemone: Optional[SystemOneConfig] = Field(
+        description="System One decision model that gates facts on ingest and results on output",
         default=None,
     )
     version: str = Field(

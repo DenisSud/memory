@@ -14,6 +14,12 @@ services:
     environment:
       - POSTGRES_USER=${MEM0_DB_USER:-mem0}
       - POSTGRES_HOST_AUTH_METHOD=trust
+      # The cluster lives one level down, in ./pgdata/pgdata — the layout the
+      # running deployment already had. Without this, postgres finds a
+      # non-empty data directory it did not create and refuses to start
+      # ("exists but is not empty"). Do not change it on a live volume: the
+      # path is where the data is.
+      - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
       - ./pgdata:/var/lib/postgresql/data
       - ../server/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro

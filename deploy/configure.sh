@@ -7,15 +7,17 @@
 # Env: MEM0_URL (default http://127.0.0.1:8888), OLLAMA_BASE_URL,
 #      MEM0_LLM_MODEL, MEM0_EMBEDDER_MODEL, MEM0_EMBED_DIMS,
 #      MEM0_SYSTEMONE_BASE_URL (default OLLAMA_BASE_URL), MEM0_SYSTEMONE_MODEL,
-#      MEM0_SYSTEMONE_API_KEY, MEM0_SYSTEMONE_TIMEOUT_MS, MEM0_GATE_THRESHOLD,
-#      MEM0_INGEST_ENABLED, MEM0_OUTPUT_ENABLED.
+#      MEM0_SYSTEMONE_API_KEY, MEM0_SYSTEMONE_TIMEOUT_MS (default 15000),
+#      MEM0_GATE_THRESHOLD, MEM0_INGEST_ENABLED, MEM0_OUTPUT_ENABLED.
 #
 # Why every field: the LLM must run with reasoning off (thinking consumes the
 # token budget on Ollama), the embedder + vector store dims must match the
 # embedder model (pgvector table dimensions freeze at first insert), and the
 # System One gates are where the service filters memories — one gate on ingest,
 # one on output. Both gates fail open, so a stopped decision model degrades
-# recall quality instead of breaking it.
+# recall quality instead of breaking it. The timeout is generous because the
+# first call after the model unloads pays its load time; with a shorter one that
+# first call times out and passes unfiltered.
 set -euo pipefail
 
 base="${MEM0_URL:-http://127.0.0.1:8888}"
@@ -27,7 +29,7 @@ dims="${MEM0_EMBED_DIMS:-768}"
 gate_base="${MEM0_SYSTEMONE_BASE_URL:-$ollama}"
 gate_model="${MEM0_SYSTEMONE_MODEL:-nimble:latest}"
 gate_key="${MEM0_SYSTEMONE_API_KEY:-}"
-gate_timeout="${MEM0_SYSTEMONE_TIMEOUT_MS:-5000}"
+gate_timeout="${MEM0_SYSTEMONE_TIMEOUT_MS:-15000}"
 gate_threshold="${MEM0_GATE_THRESHOLD:-0.5}"
 ingest_enabled="${MEM0_INGEST_ENABLED:-true}"
 output_enabled="${MEM0_OUTPUT_ENABLED:-true}"

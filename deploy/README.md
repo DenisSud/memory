@@ -50,7 +50,10 @@ The service filters memories itself, through a System One model, in two places
 
 Both gates fail open (an error or timeout keeps everything), ask one `noul`
 question per item in a single call, and share the threshold from `/configure`
-(`MEM0_GATE_THRESHOLD`, default 0.5). The code is `mem0/systemone/`; the
+(`MEM0_GATE_THRESHOLD`, default 0.5). The timeout default is 15 s because the
+first call after the model unloads pays its load time, and a shorter one times
+out — the request then passes unfiltered. Keep the model warm
+(`OLLAMA_KEEP_ALIVE`) if that first call matters. The code is `mem0/systemone/`; the
 load-bearing part is the instruction wording in `gates.py`, tuned for small
 local System One models — a vague question scores everything high and filters
 nothing.

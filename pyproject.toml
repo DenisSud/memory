@@ -163,12 +163,10 @@ line-length = 120
 select = ["E4", "E7", "E9", "F"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["mem0", "mem0_cli"]
+known-first-party = ["mem0"]
 
 [tool.isort]
 profile = "black"
-known_first_party = ["mem0", "mem0_cli"]
+known_first_party = ["mem0"]
 # isort scope kept aligned with [tool.ruff.lint.isort] above.
 # black-equivalent profile here matches the formatter behaviour ruff applies.
-# Plugin-version bumps need a touch here to fire required CI checks (path-filter trap).
-# Last touched: plugin v0.1.3

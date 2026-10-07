@@ -1,21 +1,8 @@
 .git
-.github
-.agents
-.claude-plugin
-.codex-plugin
-.cursor-plugin
-.kimi-plugin
+.devenv
 .pytest_cache
 .ruff_cache
-cli
-docs
-evaluation
-examples
-integrations
-mem0-ts
-scripts
-skills
-tests
-server/dashboard
 deploy/pgdata
 deploy/history
+# Tests are not part of the image; the deploy stack runs the server only.
+tests

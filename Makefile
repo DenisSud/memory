@@ -27,9 +27,6 @@ sort:
 lint:
 	hatch run lint
 
-docs:
-	cd docs && mintlify dev
-
 build:
 	hatch build
 

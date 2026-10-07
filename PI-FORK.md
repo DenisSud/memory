@@ -10,9 +10,9 @@ the commits we want from a later release.
 
 Tags:
 
-- `v2.2.1-pi1` — what the deployment runs: upstream v2.2.1 with our first
-  revision on top. `main` has moved past it, so this tag is what a live
-  deployment should be diffed against.
+- `v2.2.1-pi1` — upstream v2.2.1 with our first revision on top (the gates).
+- `v2.2.1-pi2` — what the deployment runs: `pi1` plus the listing cap raised
+  to 10,000; a live deployment should be diffed against this tag.
 - `mem0-js-sdk-v<version>` — the JavaScript client's releases, following
   upstream's own per-package convention (`vercel-ai-v3.0.3`).
 

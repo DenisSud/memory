@@ -4,12 +4,17 @@ This is a fork of [`mem0ai/mem0`](https://github.com/mem0ai/mem0) that we run as
 the memory service. It exists so integration that belongs to the service lives
 in the service, instead of being worked around in every client.
 
-- `main` — upstream `main`, kept pristine.
-- `upstream-v2.2.1` — the upstream release we pin, and the base branch our pull
-  requests target. Not `main`: that tracks upstream's HEAD, so reviewing against
-  it would show every upstream commit after the tag as a revert.
-- `pi` — our patch branch, based on the base branch above. The deployment pins
-  the tag `v2.2.1-pi1`: upstream's version, our revision on top.
+`main` is the trunk and the base for every pull request: the upstream tree plus
+the patch below. Upstream is **not tracked** — we never rebase, we cherry-pick
+the commits we want from a later release.
+
+Tags:
+
+- `v2.2.1-pi1` — what the deployment runs: upstream v2.2.1 with our first
+  revision on top. `main` has moved past it, so this tag is what a live
+  deployment should be diffed against.
+- `mem0-js-sdk-v<version>` — the JavaScript client's releases, following
+  upstream's own per-package convention (`vercel-ai-v3.0.3`).
 
 ## What we change
 
@@ -47,6 +52,10 @@ The **listing cap**: `server/main.py` raises `ALL_MEMORIES_LIMIT` from upstream'
 1,000 to 10,000 — consumers list the whole store for status counts and
 exact-duplicate maintenance, and the store is already past 1,000.
 
+The **JavaScript client**: `sdk/js` is `mem0-js-sdk`, a typed client for the
+four service endpoints. Nothing consumes it yet — the Pi extension keeps its own
+client until it is switched over. See `sdk/js/README.md`.
+
 ## Running it
 
 `deploy/` is this service's own deployment: the compose stack (mem0 + pgvector),
@@ -55,16 +64,17 @@ repo — the package and upstream's `server/`, dashboard excluded — so the ser
 and its library never drift. Consumers (pi bots, the personal agent) hold a URL,
 a key and a `user_id`; nothing scoped server-side. See `deploy/README.md`.
 
-## Rebase on a new upstream release
+## Take a change from a later upstream release
 
 ```bash
 git fetch upstream --tags
-git branch upstream-v<version> v<version> && git push origin upstream-v<version>
-git rebase upstream-v<version> pi
+git log --oneline v2.2.1..v<version> -- <path>   # find the commit
+git cherry-pick <sha>
 ```
 
-The patch is small and touches few files; conflicts should stay local to
-`main.py`, where the two hooks are marked by comments.
+The patch is small and touches few files, so a cherry-pick usually applies
+cleanly; conflicts stay local to `main.py`, where the two hooks are marked by
+comments.
 
 ## Tests
 

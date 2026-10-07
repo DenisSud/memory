@@ -2,12 +2,12 @@
 
 The self-hosted memory service behind Denis's Pi agents and bots.
 
-This is a fork of [`mem0ai/mem0`](https://github.com/mem0ai/mem0), pinned at
-**v2.2.1**. It exists to run one deployment: upstream's Python SDK and FastAPI
-server, our **System One gates** (a decision model filters memories on ingest
-and on output), our compose stack, and a small JavaScript client for the
-service. Changes we want from later upstream releases are cherry-picked, never
-rebased.
+This is a fork of [`mem0ai/mem0`](https://github.com/mem0ai/mem0), run as one
+deployment: upstream's Python SDK and FastAPI server, our **System One gates**
+(a decision model filters memories on ingest and on output), our compose stack,
+and a small JavaScript client for the service. `main` is the trunk; upstream is
+not tracked, so a change we want from a later release is cherry-picked, never
+rebased. The deployment pins the tag `v2.2.1-pi1`.
 
 - [`PI-FORK.md`](PI-FORK.md) — what we changed and why. Read this first.
 - [`deploy/README.md`](deploy/README.md) — running the stack.

@@ -9,8 +9,9 @@ service behind Denis's Pi agents and bots. It exists to own one deployment, not
 to contribute upstream. [`PI-FORK.md`](PI-FORK.md) is the authoritative account
 of what we changed and why; read it before touching the gates.
 
-Upstream is **pinned at `v2.2.1`** and never rebased. When we want something
-from a later release, cherry-pick that commit. Consequences:
+`main` is the trunk and the base for every pull request: the upstream tree plus
+our patch. Upstream is not tracked — we never rebase, we cherry-pick the commits
+we want from a later release. Consequences:
 
 - There is no upstream PR, CLA or review gate. Do not open one.
 - Upstream-owned files stay as close to upstream as possible, so cherry-picks

@@ -17,6 +17,8 @@ from a later release, cherry-pick that commit. Consequences:
   keep applying. Change them only when the fork genuinely needs to.
 - A file that only exists for upstream's benefit should be deleted, not
   maintained — most already were.
+- Upstream behaviour is preserved: the gates are the fork's only behavioural
+  change. A cleanup commit must not change what the service returns.
 
 ## Layout
 
@@ -28,7 +30,7 @@ from a later release, cherry-pick that commit. Consequences:
 | `deploy/` | Our compose stack (server + pgvector + Ollama), image and key provisioning |
 | `tests/systemone/` | The gate tests |
 | `tests/` (rest) | Upstream's SDK tests |
-| `sdk/js/` | `mem0-js-sdk` — the JavaScript client for the service (git-dependency, tag-released) |
+| `sdk/js/` | `mem0-js-sdk` — the JavaScript client for the service (git-dependency, tag-released). Not wired into a consumer yet |
 
 Not here any more, deliberately: the docs site, the dashboard, `integrations/`,
 the TypeScript SDK, the CLIs, `examples/`, `skills/`, `scripts/`, the

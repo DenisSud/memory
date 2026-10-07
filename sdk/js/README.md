@@ -10,7 +10,7 @@ Consumed as a Git dependency, pinned to a release tag:
 ```json
 {
   "dependencies": {
-    "mem0-js-sdk": "git+ssh://git@git.sudakov.site:2223/DenisSud/mem0.git#mem0-js-sdk-v0.1.0&path:/sdk/js"
+    "mem0-js-sdk": "git+https://github.com/DenisSud/memory.git#mem0-js-sdk-v0.1.0&path:/sdk/js"
   }
 }
 ```

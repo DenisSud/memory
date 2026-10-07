@@ -1,6 +1,6 @@
 .git
 .devenv
-.forgejo
+.github
 .pytest_cache
 .ruff_cache
 deploy/pgdata

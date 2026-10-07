@@ -18,7 +18,7 @@ carries the **System One gates**, the service's memory filtering.
 
 ```sh
 # the repo is private: use a read-only deploy key for this host
-git clone ssh://git@git.sudakov.site:2223/DenisSud/mem0.git ~/mem0
+git clone https://github.com/DenisSud/memory.git ~/mem0
 # when Forgejo runs on this same host, the public name does not hairpin —
 # use its local SSH endpoint instead (and keep it as the remote):
 #   git clone ssh://git@127.0.0.1:2223/DenisSud/mem0.git ~/mem0

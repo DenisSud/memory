@@ -52,6 +52,13 @@ The **listing cap**: `server/main.py` raises `ALL_MEMORIES_LIMIT` from upstream'
 1,000 to 10,000 — consumers list the whole store for status counts and
 exact-duplicate maintenance, and the store is already past 1,000.
 
+The **refactor tool**: `tools/refactor/` is a manual maintenance pass over the
+store. It clusters near-duplicate memories by embedding similarity and has a
+small pi agent merge each cluster into a cleaner set (trusting the newer memory
+on conflict), then rewrites the survivors in place and deletes the rest. It is
+run by hand — `plan` writes a review file, `apply` backs up and replays it — and
+never runs inside the service. See `tools/refactor/README.md`.
+
 The **JavaScript client**: `sdk/js` is `mem0-js-sdk`, a typed client for the
 four service endpoints. Nothing consumes it yet — the Pi extension keeps its own
 client until it is switched over. See `sdk/js/README.md`.

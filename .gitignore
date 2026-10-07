@@ -202,3 +202,6 @@ testing.ipynb
 
 # devenv: the dev shell (devenv.lock is tracked)
 .devenv*
+
+# refactor tool working directory
+.refactor-work/

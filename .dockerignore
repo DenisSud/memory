@@ -1,0 +1,8 @@
+.git
+.devenv
+.pytest_cache
+.ruff_cache
+deploy/pgdata
+deploy/history
+# Tests are not part of the image; the deploy stack runs the server only.
+tests

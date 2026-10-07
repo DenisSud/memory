@@ -1,0 +1,57 @@
+# The memory service: one compose project, independent of everything that talks
+# to it. Deploy notes and the /configure replay live in README.md.
+#
+# Run from this directory:
+#   MEM0_ADMIN_API_KEY=... MEM0_JWT_SECRET=... podman-compose up -d --build
+#
+# Secrets are injected at up time, never stored in this file.
+services:
+  db:
+    image: docker.io/pgvector/pgvector:pg17
+    container_name: mem0-db
+    restart: unless-stopped
+    shm_size: "128mb"
+    environment:
+      - POSTGRES_USER=${MEM0_DB_USER:-mem0}
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      # The cluster lives one level down, in ./pgdata/pgdata — the layout the
+      # running deployment already had. Without this, postgres finds a
+      # non-empty data directory it did not create and refuses to start
+      # ("exists but is not empty"). Do not change it on a live volume: the
+      # path is where the data is.
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+      - ../server/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -q -U ${MEM0_DB_USER:-mem0}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mem0:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: mem0-server:local
+    container_name: mem0
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${MEM0_PORT:-8888}:8000"
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=${MEM0_DB_USER:-mem0}
+      - APP_DB_NAME=mem0_app
+      - OPENAI_API_KEY=${OLLAMA_API_KEY:-ollama}
+      - OPENAI_BASE_URL=${OLLAMA_BASE_URL:-http://127.0.0.1:11434/v1}
+      - MEM0_DEFAULT_LLM_MODEL=${MEM0_LLM_MODEL:-qwen3.5:4b}
+      - MEM0_DEFAULT_EMBEDDER_MODEL=${MEM0_EMBEDDER_MODEL:-nomic-embed-text-v2-moe:cpu}
+      - MEM0_TELEMETRY=false
+      - ADMIN_API_KEY=${MEM0_ADMIN_API_KEY:?inject at up time}
+      - JWT_SECRET=${MEM0_JWT_SECRET:?inject at up time}
+    volumes:
+      - ./history:/app/history
+    command: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000"

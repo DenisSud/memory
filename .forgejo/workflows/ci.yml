@@ -1,0 +1,48 @@
+# Forgejo Actions — the checks this fork actually runs.
+#
+# The repository has no runner registered yet (the API reports none), so nothing
+# executes until one is attached. `runs-on` uses the conventional label; map it
+# to your runner's labels (act_runner's default set includes `ubuntu-latest` and
+# `docker`) before expecting green checks.
+
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python:
+    name: ruff + the gate tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # The `dev` extra pins ruff==0.16.0 — the version these checks are meant
+      # to use — and `test` brings pytest.
+      - run: pip install -e ".[test,dev]"
+      - run: ruff check
+      # The fork's own tests: no network, no provider SDKs, seconds to run.
+      # Upstream's suite needs the vector-store and LLM extras and stays out of
+      # the default check.
+      - run: pytest tests/systemone -q
+
+  js:
+    name: mem0-js-sdk
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sdk/js
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build

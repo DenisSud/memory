@@ -43,6 +43,10 @@ Enabling it is configuration, no code:
 
 Without a `systemone` block the service behaves exactly like upstream.
 
+The **listing cap**: `server/main.py` raises `ALL_MEMORIES_LIMIT` from upstream's
+1,000 to 10,000 — consumers list the whole store for status counts and
+exact-duplicate maintenance, and the store is already past 1,000.
+
 ## Running it
 
 `deploy/` is this service's own deployment: the compose stack (mem0 + pgvector),

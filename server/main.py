@@ -382,7 +382,11 @@ def add_memory(memory_create: MemoryCreate, _auth=Depends(verify_auth)):
         raise upstream_error()
 
 
-ALL_MEMORIES_LIMIT = 1000
+# Largest page a single listing request may ask for. Consumers (the pi memory
+# extension) scan the whole store for status counts and exact-duplicate
+# maintenance, so one page has to be able to hold it (upstream's cap of 1,000
+# could not).
+ALL_MEMORIES_LIMIT = 10_000
 _RESERVED_PAYLOAD_KEYS = {"data", "user_id", "agent_id", "run_id", "hash", "created_at", "updated_at", "expiration_date"}
 
 

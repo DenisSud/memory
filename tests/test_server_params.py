@@ -646,8 +646,17 @@ class TestGetMemories:
         _, kwargs = mock_memory.vector_store.list.call_args
         assert kwargs["top_k"] == 0
 
+    def test_get_memories_accepts_top_k_at_raised_cap(self, client, mock_memory):
+        """Consumers list the whole store; upstream's 1,000 cap was below it."""
+        response = client.get("/memories?user_id=test_routing_user&top_k=10000")
+
+        assert response.status_code == 200
+        _, kwargs = mock_memory.get_all.call_args
+        assert kwargs["filters"] == {"user_id": "test_routing_user"}
+        assert kwargs["top_k"] == 10000
+
     def test_get_memories_rejects_top_k_above_limit(self, client, mock_memory):
-        response = client.get("/memories?user_id=test_routing_user&top_k=1001")
+        response = client.get("/memories?user_id=test_routing_user&top_k=10001")
 
         assert response.status_code == 422
         mock_memory.get_all.assert_not_called()

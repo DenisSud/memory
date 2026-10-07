@@ -10,7 +10,7 @@ Consumed as a Git dependency, pinned to a release tag:
 ```json
 {
   "dependencies": {
-    "mem0-js-sdk": "git+ssh://git@git.sudakov.site:2223/DenisSud/mem0.git#v0.1.0&path:/sdk/js"
+    "mem0-js-sdk": "git+ssh://git@git.sudakov.site:2223/DenisSud/mem0.git#mem0-js-sdk-v0.1.0&path:/sdk/js"
   }
 }
 ```
@@ -83,5 +83,6 @@ pnpm typecheck
 pnpm build       # tsup → dist/, ESM + CJS + types
 ```
 
-Releases are tags of this repository (`v0.1.0`, …). Bump `version` here and tag
-the commit; consumers pin the tag.
+Releases are tags of this repository, prefixed with the package name
+(`mem0-js-sdk-v0.1.0`, matching upstream's `vercel-ai-v*` tags). Bump `version`
+here and tag the commit; consumers pin the tag.
